@@ -192,6 +192,41 @@ kube-proxy-key.pem
 kube-proxy.pem
 ```
 
+### Scheduler Client Certificate
+```
+{
+cat > kube-scheduler-csr.json <<EOF
+{
+  "CN": "system:kube-scheduler",
+  "keys": {
+    "alog": "rsa",
+    "size": 2048
+  },
+  "names": [
+   {
+    "O": "system:kube-scheduler",
+    "OU": "Kubernetes The Hard Way",
+    "L": "Chicago",
+    "ST": "IL",
+    "C": "US"
+   }
+  ]
+}
+EOF
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+}
+```
+Results:
+```
+kube-scheduler-key.pem
+kube-scheduler.pem
+```
+
 ### Admin user certificate
 
 Generate the admin client certificate and private key:

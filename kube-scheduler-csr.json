@@ -1,0 +1,16 @@
+{
+  "CN": "system:kube-scheduler",
+  "keys": {
+    "alog": "rsa",
+    "size": 2048
+  },
+  "names": [
+   {
+    "O": "system:kube-scheduler",
+    "OU": "Kubernetes The Hard Way",
+    "L": "Chicago",
+    "ST": "IL",
+    "C": "US"
+   }
+  ]
+}
