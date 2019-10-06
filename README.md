@@ -70,4 +70,46 @@ ca-key.pem
 ca.pem
 ```
 
+### Admin user certificate
+
+Generate the admin client certificate and private key:
+```
+{
+cat > admin-csr.json <<EOF
+{
+  "CN": "admin",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+   {
+    "O": "system:masters",
+    "OU": "Kubernetes The Hard Way",
+    "L": "Chicago",
+    "ST": "IL",
+    "C": "US"
+   }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  admin-csr.json | cfssljson -bare admin
+
+}
+```
+Results:
+
+```
+admin-key.pem
+admin.pem
+```
+
 ### Certs for Node Authorization
+Node authorization is a special-purpose authorization mode that specifically authorizes API requests made by kubelets.
+
