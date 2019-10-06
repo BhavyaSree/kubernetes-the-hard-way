@@ -9,7 +9,7 @@
  * kube-apiserver
  * Admin user
 
-### Install [CloudFlare](https://github.com/cloudflare/cfssl)'s PKI toolkit `cfssl`
+#### Install [CloudFlare](https://github.com/cloudflare/cfssl)'s PKI toolkit `cfssl`
 
 ```
 brew install cfssl
@@ -308,7 +308,41 @@ Results:
 admin-key.pem
 admin.pem
 ```
+### Service Account Key Pair
+```
+{
+cat > service-account-csr.json <<EOF
+{
+  "CN": "service-accounts",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Chicago",
+      "O": "Kubernetes",
+      "OU": "Kubernetes The Hard Way",
+      "ST": "IL"
+    }
+  ]
+}
+EOF
 
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  service-account-csr.json | cfssljson -bare service-account
+}
+```
+Result:
+```
+	service-account.csr
+	service-account.pem
+```
 ### Certs for Node Authorization
 Node authorization is a special-purpose authorization mode that specifically authorizes API requests made by kubelets.
 
