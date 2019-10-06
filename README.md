@@ -121,6 +121,42 @@ worker-2-key.pem
 worker-2.pem
 ```
 
+###  Controller Manager Client Certificate
+```
+{
+cat > kube-controller-manager-csr.json <<EOF
+{
+  "CN": "system:kube-controller-manager",
+  "keys": {
+    "alog": "rsa",
+    "size": 2048
+  },
+  "names": [
+   {
+    "O": "system:kube-controller-manager",
+    "OU": "Kubernetes The Hard Way",
+    "L": "Chicago",
+    "ST": "IL",
+    "C": "US"
+   }
+  ]
+}
+EOF
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+}
+```
+
+Results:
+```
+kube-controller-manager-key.pem
+kube-controller-manager.pem
+```
+
 ### Admin user certificate
 
 Generate the admin client certificate and private key:
