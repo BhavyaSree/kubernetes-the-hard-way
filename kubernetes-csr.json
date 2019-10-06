@@ -1,0 +1,16 @@
+{
+  "CN": "system:kube-apiserver",
+  "keys": {
+    "alog": "rsa",
+    "size": 2048
+  },
+  "names": [
+   {
+    "O": "system:kube-apiserver",
+    "OU": "Kubernetes The Hard Way",
+    "L": "Chicago",
+    "ST": "IL",
+    "C": "US"
+   }
+  ]
+}

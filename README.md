@@ -3,11 +3,11 @@
 
  Generate TLS certificates for the following components: 
  * kubelet
- * etcd
- * kube-apiserver
  * kube-controller-manager
  * kube-proxy
  * kube-scheduler
+ * kube-apiserver
+ * Admin user
 
 ### Install [CloudFlare](https://github.com/cloudflare/cfssl)'s PKI toolkit `cfssl`
 
@@ -226,6 +226,50 @@ Results:
 kube-scheduler-key.pem
 kube-scheduler.pem
 ```
+### Kubernetes API Server Certificate
+The `kubernetes-the-hard-way` static IP address will be included in the list of subject alternative names for the Kubernetes API Server certificate. This will ensure the certificate can be validated by remote clients.
+
+
+```
+{
+KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
+  --region $(gcloud config get-value compute/region) \
+  --format 'value(address)')
+
+KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local,api.kubernetes.blog
+
+cat > kubernetes-csr.json <<EOF
+{
+  "CN": "system:kube-apiserver",
+  "keys": {
+    "alog": "rsa",
+    "size": 2048
+  },
+  "names": [
+   {
+    "O": "system:kube-apiserver",
+    "OU": "Kubernetes The Hard Way",
+    "L": "Chicago",
+    "ST": "IL",
+    "C": "US"
+   }
+  ]
+}
+EOF
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname=10.32.0.1,10.240.0.10,10.240.0.11,10.240.0.12,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} \
+  -profile=kubernetes \
+  kubernetes-csr.json | cfssljson -bare kubernetes
+}
+```
+Results:
+```
+kube-apiserver-key.pem
+kube-apiserver.pem
+```
 
 ### Admin user certificate
 
@@ -257,11 +301,9 @@ cfssl gencert \
   -config=ca-config.json \
   -profile=kubernetes \
   admin-csr.json | cfssljson -bare admin
-
 }
 ```
 Results:
-
 ```
 admin-key.pem
 admin.pem
