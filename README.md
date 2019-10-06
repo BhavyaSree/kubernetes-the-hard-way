@@ -6,8 +6,8 @@
  * etcd
  * kube-apiserver
  * kube-controller-manager
- * kube-scheduler 
- * kube-proxy.
+ * kube-proxy
+ * kube-scheduler
 
 ### Install [CloudFlare](https://github.com/cloudflare/cfssl)'s PKI toolkit `cfssl`
 
@@ -155,6 +155,41 @@ Results:
 ```
 kube-controller-manager-key.pem
 kube-controller-manager.pem
+```
+
+### Kube Proxy Client Certificate
+```
+{
+cat > kube-proxy-csr.json <<EOF
+{
+  "CN": "system:kube-proxy",
+  "keys": {
+    "alog": "rsa",
+    "size": 2048
+  },
+  "names": [
+   {
+    "O": "system:kube-proxy",
+    "OU": "Kubernetes The Hard Way",
+    "L": "Chicago",
+    "ST": "IL",
+    "C": "US"
+   }
+  ]
+}
+EOF
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-proxy-csr.json | cfssljson -bare kube-proxy
+}
+```
+Results:
+```
+kube-proxy-key.pem
+kube-proxy.pem
 ```
 
 ### Admin user certificate
