@@ -8,7 +8,7 @@
  * kube-scheduler, kubelet
  * kube-proxy.
 
-### Install CloudFlare's PKI toolkit `cfssl`
+### Install [CloudFlare](https://github.com/cloudflare/cfssl)'s PKI toolkit `cfssl`
 
 ```
 brew install cfssl
@@ -69,3 +69,5 @@ Results:
 ca-key.pem
 ca.pem
 ```
+
+### Certs for Node Authorization
